@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- displays site properly based on user's device -->
+
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="./images/favicon-32x32.png"
+    />
+
+    <title>Frontend Mentor | Todo app</title>
+
+    <link rel="stylesheet" href="./assets/style.css" />
+  </head>
+  <body thema="light">
+    <div class="wrapper">
+      <div class="todo">
+        <div class="todo-header">
+          <h1 class="title">Todo</h1>
+          <a id="toggle-dark">
+            <img src="./images/icon-moon.svg" alt="" />
+          </a>
+        </div>
+        <div class="todo-body">
+          <form>
+            <input id="input" type="text" placeholder="Create a new todo..." />
+            <button id="btn-submit" type="submit">
+              <span>&#43;</span>
+            </button>
+          </form>
+
+          <div class="todo-lists">
+            <ul class="lists">
+              <!-- <li class="list-item clone" >
+                <div>
+                  <button type="button" class="check"></button>
+                  <span>test</span>
+                </div>
+
+                <img class="remove" src="./images/icon-cross.svg" alt="">
+              </li> -->
+            </ul>
+            <div class="lists-footer">
+              <p><span id="list-count">0</span> items left</p>
+              <div class="lists-filter">
+                <a class="active" data-filter="all">All</a>
+                <a data-filter="active">Active</a>
+                <a data-filter="completed" >Completed</a>
+              </div>
+              <a data-filter="clear-completed"> Clear Completed </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer">Drag and drop to reorder list</div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="./assets/script.js"></script>
+  </body>
+</html>
