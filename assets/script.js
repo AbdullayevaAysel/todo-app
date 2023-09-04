@@ -9,7 +9,8 @@ $(document).ready(function () {
 
   function getEl(el) {
     $(el).on("click", function () {
-      let li = $(this).closest("li");
+      let li = $(this).closest("li")
+      console.log(li);
       if ($(this).hasClass("compileted-btn")) {
         $(this).removeClass("compileted-btn")
         $(li).removeClass("compileted")
@@ -22,7 +23,6 @@ $(document).ready(function () {
 
         // notification
         notification($(li).find("span").text(), "compileted oldu", "")
-
       }
     })
   }
@@ -38,9 +38,11 @@ $(document).ready(function () {
 
   const addTodo = (val) => {
     let li = $(`
-    <li class="list-item">
+    <li class="list-item" draggable="true">
       <div>
-        <button type="button" class="check"></button>
+        <button type="button" class="check">
+          <img src="./images/icon-check.svg" alt="">
+        </button>
         <span>${val}</span>
       </div>
       <img class="remove" src="./images/icon-cross.svg" alt="">
@@ -78,6 +80,7 @@ $(document).ready(function () {
       let val = $(input).val()
       addTodo(val)
       notification(val, `elave olundu`, "+")
+      addTodoToObject(val)
       $(input).val("")
     }
   }
@@ -119,10 +122,49 @@ $(document).ready(function () {
   })
 
   $('[data-filter="clear-completed"]').on("click", function (e) {
-    let li = $(".lists li.compileted");
+    let li = $(".lists li.compileted")
     $(li).remove()
     notification($(li).find("span").text(), "compiletedler silindi", "")
     calcCount($(".lists"))
     addActive($(this))
   })
+
+  // add localStorage
+
+  let todos = localStorage.getItem("todos")
+    ? JSON.parse(localStorage.getItem("todos"))
+    : []
+  let count = 0
+  function addTodoToObject(val) {
+    let obj = {}
+    obj["id"] = count
+    obj["name"] = val
+    todos.unshift(obj)
+    addTodoToLocalStorage(todos)
+    count++
+  }
+
+  function addTodoToLocalStorage(object) {
+    let obj = JSON.stringify(object)
+    localStorage.setItem("todos", obj)
+  }
+
+  function showTodoGetLocalStorage() {
+    let getData = localStorage.getItem("todos")
+    let parseObj = JSON.parse(getData)
+    let html = parseObj.map(
+      (item) =>
+        `<li key=${item?.id} class="list-item" draggable="true">
+      <div>
+        <button type="button" class="check">
+          <img src="./images/icon-check.svg" alt="">
+        </button>
+        <span>${item?.name}</span>
+      </div>
+      <img class="remove" src="./images/icon-cross.svg" alt="">
+    </li>`
+    )
+    $(".lists").append(html)
+  }
+  showTodoGetLocalStorage()
 })
