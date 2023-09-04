@@ -9,20 +9,30 @@ $(document).ready(function () {
 
   function getEl(el) {
     $(el).on("click", function () {
+      let li = $(this).closest("li");
       if ($(this).hasClass("compileted-btn")) {
         $(this).removeClass("compileted-btn")
-        $(this).closest("li").removeClass("compileted")
+        $(li).removeClass("compileted")
+
+        // notification
+        notification($(li).find("span").text(), "active oldu", "")
       } else {
         $(this).addClass("compileted-btn")
-        $(this).closest("li").addClass("compileted")
+        $(li).addClass("compileted")
+
+        // notification
+        notification($(li).find("span").text(), "compileted oldu", "")
+
       }
     })
   }
 
-  function removeEl(el) {
+  function removeEl(el, val) {
     $(el).on("click", function () {
       el.closest("li").remove()
       calcCount($(".lists"))
+
+      notification(val, `todo silindi`, "")
     })
   }
 
@@ -38,14 +48,36 @@ $(document).ready(function () {
     `)
     $(".lists").prepend($(li))
     getEl($(li).find(".check"))
-    removeEl($(li).find(".remove"))
+    removeEl($(li).find(".remove"), val)
     calcCount($(".lists"))
+  }
+
+  function notification(value, text, icon) {
+    let div = $(`
+    <div class="notification-item">
+      <i class="text">${value}</i> <span> ${text}</span>
+    </div>
+    `)
+    $(".notification").append(div)
+
+    let count = 10
+    const interval = setInterval(() => {
+      if (count <= 100) {
+        $(div).css("--width", `${count}%`)
+        count += 30
+      } else {
+        clearInterval(interval)
+        $(div).remove()
+      }
+    }, 700)
   }
 
   const callAddTodo = (input, e) => {
     e.preventDefault()
     if ($(input).val() !== "") {
-      addTodo($(input).val())
+      let val = $(input).val()
+      addTodo(val)
+      notification(val, `elave olundu`, "+")
       $(input).val("")
     }
   }
@@ -87,7 +119,9 @@ $(document).ready(function () {
   })
 
   $('[data-filter="clear-completed"]').on("click", function (e) {
-    $(".lists li.compileted").remove()
+    let li = $(".lists li.compileted");
+    $(li).remove()
+    notification($(li).find("span").text(), "compiletedler silindi", "")
     calcCount($(".lists"))
     addActive($(this))
   })
