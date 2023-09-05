@@ -40,12 +40,11 @@ $(document).ready(function () {
     })
   }
 
-  let parseData = localStorage.getItem("todos");
+  let parseData = localStorage.getItem("todos")
   let count =
-    parseData !== null && Array.isArray(JSON.parse(parseData) && JSON.parse(parseData).length > 0)
-      ? Math.max(
-          ...$.map(JSON.parse(parseData), (item) => item.id)
-        )
+    parseData !== null &&
+    Array.isArray(JSON.parse(parseData) && JSON.parse(parseData).length > 0)
+      ? Math.max(...$.map(JSON.parse(parseData), (item) => item.id))
       : 0
 
   const addTodo = (val) => {
@@ -144,7 +143,7 @@ $(document).ready(function () {
   function a(li) {
     $(li).each(function () {
       $(li).remove()
-      notification($(li).find("span").text(), "compiletedler silindi", "")
+      notification($(li).find("span").text(), "silindi", "")
       calcCount($(".lists"))
       addActive($(this))
       removeTodoObject($(this).attr("key"))
