@@ -40,11 +40,13 @@ $(document).ready(function () {
     })
   }
 
-  let count = localStorage.getItem("todos")
-    ? Math.max(
-        ...$.map(JSON.parse(localStorage.getItem("todos")), (item) => item.id)
-      )
-    : 0
+  let parseData = localStorage.getItem("todos");
+  let count =
+    parseData !== null && Array.isArray(JSON.parse(parseData) && JSON.parse(parseData).length > 0)
+      ? Math.max(
+          ...$.map(JSON.parse(parseData), (item) => item.id)
+        )
+      : 0
 
   const addTodo = (val) => {
     let li = $(`
@@ -66,8 +68,10 @@ $(document).ready(function () {
 
   function notification(value, text, icon) {
     let div = $(`
-    <div class="notification-item">
-      <i class="text">${value}</i> <span> ${text}</span>
+    <div class="toast">
+      <div class="notification-item">
+        <i class="text">${value}</i> <span> ${text}</span>
+      </div>
     </div>
     `)
     $(".notification").append(div)
@@ -201,10 +205,17 @@ $(document).ready(function () {
   }
   showTodoGetLocalStorage()
 
-  // Todo check from localStorage
+  // Todo complited from localStorage
   function updateTodoObject(id) {
     let clonedTodos = JSON.parse(localStorage.getItem("todos"))
     let newTodo = clonedTodos?.map((todo) => {
+      if (todo?.id == id) {
+        return { ...todo, compileted: !todo?.compileted }
+      }
+      return todo
+    })
+
+    todos = todos?.map((todo) => {
       if (todo?.id == id) {
         return { ...todo, compileted: !todo?.compileted }
       }
@@ -218,6 +229,7 @@ $(document).ready(function () {
   function removeTodoObject(id) {
     let clonedTodos = JSON.parse(localStorage.getItem("todos"))
     let newTodo = clonedTodos?.filter((todo) => todo.id != id)
+    todos = todos?.filter((todo) => todo.id != id)
     localStorage.setItem("todos", JSON.stringify(newTodo))
     clonedTodos = newTodo
   }

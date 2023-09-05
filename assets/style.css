@@ -50,7 +50,7 @@ body[thema="dark"] .todo-body #btn-submit {
   color: var(--Very-Dark-Desaturated-Blue);
 }
 
-body[thema="dark"] .notification, body[thema="dark"] .lists-filter {
+body[thema="dark"] .notification .toast, body[thema="dark"] .lists-filter {
   background:  var(--Very-Dark-Desaturated-Blue);
 }
 
@@ -199,6 +199,7 @@ body[thema="dark"] #toggle-dark {
 .list-item span {
   text-overflow: ellipsis;
   overflow: hidden;
+  width: 90%;
 }
 
 .list-item .remove {
@@ -207,6 +208,7 @@ body[thema="dark"] #toggle-dark {
 }
 
 .list-item:not(.compileted):hover .remove {
+  filter: invert(100%) sepia(16%) saturate(7463%) hue-rotate(222deg) brightness(119%) contrast(115%);
   display: block;
 }
 
@@ -234,7 +236,7 @@ body[thema="dark"] #toggle-dark {
 }
 
 .check img {
-  display: none;
+  visibility: hidden;
 }
 
 .compileted-btn {
@@ -246,7 +248,7 @@ body[thema="dark"] #toggle-dark {
 }
 
 .compileted-btn img {
-  display: block;
+  visibility: visible;
 }
 
 .compileted-btn::after {
@@ -306,15 +308,18 @@ a {
   flex-direction: column;
   gap: 10px;
   z-index: 100000;
-  background: #fff;
 
   max-width: 250px;
   width: -webkit-fill-available;
 }
 
+.notification .toast {
+  background: #fff;
+}
+
 .notification-item {
   position: relative;
-  padding: 10px;
+  padding: 10px 10px 15px 10px;
   border-radius: 3px;
   background: linear-gradient(
     90deg,
@@ -339,7 +344,7 @@ a {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  width: 100%;
+  width: 88%;
 }
 
 .notification-item span {
