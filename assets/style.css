@@ -155,6 +155,7 @@ body[thema="dark"] #toggle-dark {
 }
 
 .todo-lists {
+  position: relative;
   border-radius: 3px;
   background: #fff;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
@@ -167,6 +168,21 @@ body[thema="dark"] #toggle-dark {
   width: 100%;
   height: 300px;
   overflow: hidden auto;
+}
+
+.no-item {
+  padding: 20px;
+  text-align: center;
+  color: var(--Dark-Grayish-Blue);
+  display: none;
+}
+
+.lists:empty + .no-item {
+  display: block;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .lists-footer {
@@ -211,9 +227,12 @@ body[thema="dark"] #toggle-dark {
 }
 
 .list-item:not(.compileted):hover .remove {
+  display: block;
+}
+
+body[thema="dark"] .list-item:not(.compileted):hover .remove {
   filter: invert(100%) sepia(16%) saturate(7463%) hue-rotate(222deg)
     brightness(119%) contrast(115%);
-  display: block;
 }
 
 .compileted .remove {
@@ -280,10 +299,6 @@ a {
   .todo {
     width: 90%;
     margin-bottom: 100px;
-  }
-
-  .todo-lists {
-    position: relative;
   }
 
   .lists-filter {
