@@ -207,6 +207,10 @@ body[thema="dark"] #toggle-dark {
   border-bottom: 1px solid var(--Light-Grayish-Blue);
 }
 
+.list-item.delete {
+  display: none;
+}
+
 .list-item div {
   display: flex;
   align-items: center;
@@ -260,6 +264,14 @@ body[thema="dark"] .list-item:not(.compileted):hover .remove {
 
 .check img {
   visibility: hidden;
+}
+
+.recycle-btn {
+  display: none;
+  cursor: pointer;
+  width: 20px;
+  filter: invert(100%) sepia(16%) saturate(7463%) hue-rotate(222deg)
+  brightness(119%) contrast(115%);
 }
 
 .compileted-btn {

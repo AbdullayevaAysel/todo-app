@@ -7,7 +7,7 @@ $(document).ready(function () {
   })
 
   const calcCount = (el) => {
-    $("#list-count").html(el.find(".list-item").length)
+    $("#list-count").html(el.find(".list-item:not(.delete)").length)
   }
 
   function getEl(el) {
@@ -32,18 +32,27 @@ $(document).ready(function () {
 
   function removeEl(el, val) {
     $(el).on("click", function () {
-      el.closest("li").remove()
-      calcCount($(".lists"))
+      let li = el.closest("li")
+      if (li.hasClass("delete")) {  
+        $(this).closest("li").remove()
+        hardDeleteFromLocalStorage($(this).closest("li").attr("key"))
+        notification(val, `todo her yerden silindi`, "")
+        calcCount($(".lists"))
+      } else {
+        $(li).addClass("delete")
+        notification(val, `todo silindi`, "")
 
-      notification(val, `todo silindi`, "")
-      removeTodoObject(el.closest("li").attr("key"))
+        removeTodoObject(el.closest("li").attr("key"))
+        calcCount($(".lists"))  
+        filterAllTodo()
+      }
     })
   }
 
   let parseData = localStorage.getItem("todos")
+
   let count =
-    parseData !== null &&
-    Array.isArray(JSON.parse(parseData) && JSON.parse(parseData).length > 0)
+    parseData !== null && JSON.parse(parseData).length > 0
       ? Math.max(...$.map(JSON.parse(parseData), (item) => item.id))
       : 0
 
@@ -56,12 +65,17 @@ $(document).ready(function () {
         </button>
         <span>${val}</span>
       </div>
-      <img class="remove" src="./images/icon-cross.svg" alt="">
+
+      <div>
+        <img class="remove" src="./images/icon-cross.svg" alt="">
+        <img class="recycle-btn" src="./images/rotate.svg" alt="">
+      </div>
     </li>
     `)
     $(".lists").prepend($(li))
     getEl($(li).find(".check"))
     removeEl($(li).find(".remove"), val)
+    recycleTodo($(li).find(".recycle-btn"), val, recycleFilter)
     calcCount($(".lists"))
   }
 
@@ -120,19 +134,29 @@ $(document).ready(function () {
   }
 
   $('[data-filter="all"]').on("click", function (e) {
-    $(".lists li").css({ display: "flex" })
+    filterAllTodo()
     addActive($(this))
   })
+
+  function filterAllTodo() {
+    $(".lists li.delete").css({ display: "none" })
+    $(".lists li:not(.delete)").css({ display: "flex" })
+    $(".lists li .recycle-btn").css({ display: "none" })
+  }
 
   $('[data-filter="active"]').on("click", function (e) {
     $(".lists li.compileted").css({ display: "none" })
     $(".lists li:not(.compileted)").css({ display: "flex" })
+    $(".lists li.delete").css({ display: "none" })
+    $(".lists li .recycle-btn").css({ display: "none" })
     addActive($(this))
   })
 
   $('[data-filter="completed"]').on("click", function (e) {
     $(".lists li:not(.compileted)").css({ display: "none" })
     $(".lists li.compileted").css({ display: "flex" })
+    $(".lists li.delete").css({ display: "none" })
+    $(".lists li .recycle-btn").css({ display: "none" })
     addActive($(this))
   })
 
@@ -150,6 +174,38 @@ $(document).ready(function () {
     })
   }
 
+  // Recycle bin
+  function recycleFilter() {
+    $(".lists li:not(.delete)").css({ display: "none" })
+    $(".lists li.delete").css({ display: "flex" })
+    $(".lists li .recycle-btn").css({ display: "flex" })
+  }
+
+  function hardDelete(el, val) {
+    $(el).on("click", function () {
+      $(this).closest("li").remove()
+      hardDeleteFromLocalStorage($(this).closest("li").attr("key"))
+      notification(val, `todo her yerden silindi`, "")
+    })
+  }
+
+  $('[data-filter="recycle"]').on("click", function () {
+    recycleFilter()
+    addActive($(this))
+  })
+
+  function recycleTodo(el, val, callback) {
+    $(el).on("click", function () {
+      let li = el.closest("li")
+      $(li).removeClass("delete")
+      notification(val, `todo geri qaytarildi`, "")
+
+      recycleFromLocalStorage(el.closest("li").attr("key"))
+      calcCount($(".lists"))
+      callback()
+    })
+  }
+
   // add localStorage
   let todos = localStorage.getItem("todos")
     ? JSON.parse(localStorage.getItem("todos"))
@@ -160,6 +216,7 @@ $(document).ready(function () {
       id: count + 1,
       compileted: false,
       name: val,
+      delete: 0,
     }
     todos.unshift(obj)
     addTodoToLocalStorage(todos)
@@ -176,9 +233,9 @@ $(document).ready(function () {
     let parseObj = JSON.parse(getData)
     let html = parseObj?.map((item) =>
       $(
-        `<li key=${item?.id} class="list-item iii ${
+        `<li key=${item?.id} class="list-item ${
           item?.compileted && "compileted"
-        }" draggable="true">
+        } ${item.delete == 1 && "delete"}" draggable="true">
         <div>
           <button type="button" class="check ${
             item?.compileted && "compileted-btn"
@@ -187,13 +244,25 @@ $(document).ready(function () {
           </button>
           <span>${item?.name}</span>
         </div>
-        <img class="remove" src="./images/icon-cross.svg" alt="">
+        <div>
+          <img class="remove" title="${
+            item.delete == 1 ? "hard delete" : "add to recycle bin"
+          }" src="./images/icon-cross.svg" alt="">
+          <img class="recycle-btn" src="./images/rotate.svg" alt="">
+        </div>
       </li>`
       )
     )
     $(html).each(function () {
       getEl($(this).find(".check"))
-      removeEl($(this).find(".remove"), $(this).find("span").val())
+      !$(this).hasClass("delete")
+        ? removeEl($(this).find(".remove"), $(this).find("span").text())
+        : hardDelete($(this).find(".remove"), $(this).find("span").text())
+      recycleTodo(
+        $(this).find(".recycle-btn"),
+        $(this).find("span").text(),
+        recycleFilter
+      )
       $('[data-filter="clear-completed"]').on(
         "click",
         () => $(this).hasClass(".compileted") && a($(this).find(".compileted"))
@@ -227,8 +296,44 @@ $(document).ready(function () {
   // remove todo from localStorage
   function removeTodoObject(id) {
     let clonedTodos = JSON.parse(localStorage.getItem("todos"))
+    let newTodo = clonedTodos?.map((todo) => {
+      if (todo.id == id) {
+        return { ...todo, delete: 1 }
+      }
+      return todo
+    })
+    todos = todos?.map((todo) => {
+      if (todo.id == id) {
+        return { ...todo, delete: 1 }
+      }
+      return todo
+    })
+    localStorage.setItem("todos", JSON.stringify(newTodo))
+    clonedTodos = newTodo
+  }
+
+  function hardDeleteFromLocalStorage(id) {
+    let clonedTodos = JSON.parse(localStorage.getItem("todos"))
     let newTodo = clonedTodos?.filter((todo) => todo.id != id)
     todos = todos?.filter((todo) => todo.id != id)
+    localStorage.setItem("todos", JSON.stringify(newTodo))
+    clonedTodos = newTodo
+  }
+
+  function recycleFromLocalStorage(id) {
+    let clonedTodos = JSON.parse(localStorage.getItem("todos"))
+    let newTodo = clonedTodos?.map((todo) => {
+      if (todo.id == id) {
+        return { ...todo, delete: 0 }
+      }
+      return todo
+    })
+    todos = todos?.map((todo) => {
+      if (todo.id == id) {
+        return { ...todo, delete: 0 }
+      }
+      return todo
+    })
     localStorage.setItem("todos", JSON.stringify(newTodo))
     clonedTodos = newTodo
   }
