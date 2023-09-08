@@ -305,6 +305,9 @@ a {
 }
 
 @media (max-width: 700px) {
+  .list-item .remove {
+    display: block;
+  }
   .wrapper {
     background-size: auto 40%;
   }
