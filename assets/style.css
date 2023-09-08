@@ -305,7 +305,7 @@ a {
 }
 
 @media (max-width: 700px) {
-  .list-item .remove {
+  .list-item:not(.compileted) .remove {
     display: block;
   }
   .wrapper {
