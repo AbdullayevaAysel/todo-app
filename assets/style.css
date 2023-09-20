@@ -270,8 +270,11 @@ body[thema="dark"] .list-item:not(.compileted):hover .remove {
   display: none;
   cursor: pointer;
   width: 20px;
+}
+
+body[thema="dark"] .recycle-btn {
   filter: invert(100%) sepia(16%) saturate(7463%) hue-rotate(222deg)
-  brightness(119%) contrast(115%);
+    brightness(119%) contrast(115%);
 }
 
 .compileted-btn {

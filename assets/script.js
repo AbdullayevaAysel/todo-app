@@ -33,8 +33,9 @@ $(document).ready(function () {
   function removeEl(el, val) {
     $(el).on("click", function () {
       let li = el.closest("li")
-      if (li.hasClass("delete")) {  
+      if (li.hasClass("delete")) {
         $(this).closest("li").remove()
+
         hardDeleteFromLocalStorage($(this).closest("li").attr("key"))
         notification(val, `todo her yerden silindi`, "")
         calcCount($(".lists"))
@@ -43,7 +44,7 @@ $(document).ready(function () {
         notification(val, `todo silindi`, "")
 
         removeTodoObject(el.closest("li").attr("key"))
-        calcCount($(".lists"))  
+        calcCount($(".lists"))
         filterAllTodo()
       }
     })
@@ -104,8 +105,8 @@ $(document).ready(function () {
   let i = 0
   const callAddTodo = (input, e) => {
     e.preventDefault()
-    if ($(input).val() !== "") {
-      let val = $(input).val()
+    let val = $(input).val().trim()
+    if (val !== "") {
       addTodo(val, i)
       notification(val, `elave olundu`, "+")
       addTodoToObject(val)
